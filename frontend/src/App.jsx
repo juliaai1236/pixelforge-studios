@@ -669,25 +669,29 @@ function Dashboard({ user, onLogout }) {
         apiFetch('/api/chart-data')
       ])
       
-      if (metricsData) {
+      // Use live data if available, otherwise fallback to defaults
+      if (metricsData && metricsData.tools !== undefined) {
         setMetrics(metricsData)
       } else {
+        // Fallback to defaults if API returns no data (mock data removed)
         setMetrics([])
       }
       
-      if (Array.isArray(activityData)) {
+      if (Array.isArray(activityData) && activityData.length > 0) {
         setActivity(activityData)
-      } else if (activityData && activityData.items) {
+      } else if (activityData && activityData.items && activityData.items.length > 0) {
         setActivity(activityData.items)
       } else {
+        // No mock data — leave empty
         setActivity([])
       }
       
-      if (Array.isArray(chartDataResponse)) {
+      if (Array.isArray(chartDataResponse) && chartDataResponse.length > 0) {
         setChartData(chartDataResponse)
-      } else if (chartDataResponse && chartDataResponse.data) {
+      } else if (chartDataResponse && chartDataResponse.data && chartDataResponse.data.length > 0) {
         setChartData(chartDataResponse.data)
       } else {
+        // No mock data — leave empty
         setChartData([])
       }
       
@@ -698,7 +702,7 @@ function Dashboard({ user, onLogout }) {
   }, [])
 
   const kpis = useMemo(() => {
-    if (!metrics || !metrics.tools && !metrics.tools === 0 && !metrics.users && !metrics.revenue && !metrics.api_calls) return []
+    if (!metrics || !metrics.tools && metrics.tools !== 0 && !metrics.users && metrics.users !== 0 && !metrics.revenue && metrics.revenue !== 0 && !metrics.api_calls && metrics.api_calls !== 0) return []
     return [
       { icon: Activity, label: 'Active Tools', value: metrics.tools || 0, delta: 12.5, prefix: '' },
       { icon: Users, label: 'Total Users', value: metrics.users || 0, delta: 8.3, prefix: '' },
@@ -1097,7 +1101,7 @@ function LandingPage({ onGetStarted }) {
 }
 
 function AnalyticsPage() {
-  const [chartData, setChartData] = useState(defaultChartData)
+  const [chartData, setChartData] = useState([])
   const [chartType, setChartType] = useState('line')
 
   return (
@@ -1171,12 +1175,7 @@ function AnalyticsPage() {
 }
 
 function ReportsPage() {
-  const reports = [
-    { name: 'Monthly Revenue Report', date: '2025-06-01', type: 'PDF', size: '2.4 MB' },
-    { name: 'User Activity Summary', date: '2025-05-28', type: 'CSV', size: '1.1 MB' },
-    { name: 'Tool Usage Analytics', date: '2025-05-25', type: 'PDF', size: '3.7 MB' },
-    { name: 'Subscription Breakdown', date: '2025-05-20', type: 'XLSX', size: '856 KB' }
-  ]
+  const reports = []
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -1357,11 +1356,11 @@ function ProductApp({ user, token, onLogout }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="glass p-5">
                   <h3 className="text-sm font-semibold text-slate-200 mb-4">Revenue Trend</h3>
-                  <div className="h-[200px]"><LineChart data={defaultChartData} /></div>
+                  <div className="h-[200px]"><LineChart data={[]} /></div>
                 </div>
                 <div className="glass p-5">
                   <h3 className="text-sm font-semibold text-slate-200 mb-4">Usage Breakdown</h3>
-                  <div className="h-[200px]"><BarChart data={defaultChartData} /></div>
+                  <div className="h-[200px]"><BarChart data={[]} /></div>
                 </div>
               </div>
             </main>
