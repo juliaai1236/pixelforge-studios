@@ -1037,7 +1037,7 @@ function LandingPage({ onGetStarted }) {
               <h3 className="text-lg font-semibold text-white mb-2">How PixelForge Works</h3>
               <p className="text-sm text-slate-400 mb-6">Choose a tool → configure it → deploy in seconds. Watch the walkthrough below.</p>
               <div className="glass p-12 text-center mb-4">
-                <Film size={40} className="mx-auto text-slate-500 mb-3" />
+                <Video size={40} className="mx-auto text-slate-500 mb-3" />
                 <p className="text-xs text-slate-400">Demo video coming soon</p>
               </div>
               <button onClick={() => setShowDemo(false)} className="text-sm text-[#7C3AED] hover:underline">Close</button>
