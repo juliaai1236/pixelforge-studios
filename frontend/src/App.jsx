@@ -800,6 +800,38 @@ function App() {
     setActivePage('dashboard')
   }
 
+  const [showRegister, setShowRegister] = useState(false)
+  const [regName, setRegName] = useState('')
+  const [regEmail, setRegEmail] = useState('')
+  const [regPassword, setRegPassword] = useState('')
+  const [regError, setRegError] = useState('')
+  const [registering, setRegistering] = useState(false)
+
+  const handleRegister = async (e) => {
+    e.preventDefault()
+    if (!regName.trim() || !regEmail.trim() || !regPassword.trim()) {
+      setRegError('Please fill all fields')
+      return
+    }
+    setRegistering(true)
+    setRegError('')
+    const result = await apiFetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: regName.trim(), email: regEmail.trim(), password: regPassword.trim() })
+    })
+    setRegistering(false)
+    if (result && result.token) {
+      setUser({ name: result.name || regName.trim(), email: regEmail.trim(), token: result.token })
+      setShowRegister(false)
+      setRegName('')
+      setRegEmail('')
+      setRegPassword('')
+    } else {
+      setRegError('Registration failed. Try again.')
+    }
+  }
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900">
@@ -810,33 +842,84 @@ function App() {
             </div>
             <span className="font-semibold text-lg">PixelForge Hub</span>
           </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-            />
-            {loginError && <p className="text-xs text-red-400">{loginError}</p>}
-            <button
-              type="submit"
-              disabled={loggingIn}
-              className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-            >
-              {loggingIn ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
-          <p className="text-xs text-slate-500 text-center mt-4">
-            Enter any email and password to continue
-          </p>
+          {!showRegister ? (
+            <>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
+                />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
+                />
+                {loginError && <p className="text-xs text-red-400">{loginError}</p>}
+                <button
+                  type="submit"
+                  disabled={loggingIn}
+                  className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  {loggingIn ? 'Signing in...' : 'Sign In'}
+                </button>
+              </form>
+              <div className="mt-3">
+                <button
+                  onClick={() => setShowRegister(true)}
+                  className="w-full py-2.5 text-sm font-medium text-[#7C3AED] border border-[#7C3AED]/30 rounded-lg hover:bg-[#7C3AED]/5 transition-all duration-200"
+                >
+                  Register
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 text-center mt-4">
+                Enter any email and password to continue
+              </p>
+            </>
+          ) : (
+            <form onSubmit={handleRegister} className="space-y-4">
+              <input
+                type="text"
+                value={regName}
+                onChange={(e) => setRegName(e.target.value)}
+                placeholder="Name"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
+              />
+              <input
+                type="email"
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)}
+                placeholder="Email"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
+              />
+              <input
+                type="password"
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
+              />
+              {regError && <p className="text-xs text-red-400">{regError}</p>}
+              <button
+                type="submit"
+                disabled={registering}
+                className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                {registering ? 'Registering...' : 'Register'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowRegister(false)}
+                className="w-full py-2 text-sm text-slate-400 hover:text-slate-200 transition-all duration-200"
+              >
+                Back to Login
+              </button>
+            </form>
+          )}
         </div>
       </div>
     )
