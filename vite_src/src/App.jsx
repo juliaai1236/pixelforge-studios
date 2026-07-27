@@ -770,54 +770,281 @@ function Dashboard({ user, onLogout }) {
   )
 }
 
-function LandingPage() {
+function LandingPage({ onGetStarted }) {
+  const [showDemo, setShowDemo] = useState(false)
+
+  const testimonials = [
+    { name: 'Sarah Chen', role: 'Solopreneur', avatar: 'SC', text: 'PixelForge transformed how I manage my micro-tools. The analytics alone saved me 10h/week.', rating: 5 },
+    { name: 'Mike Johnson', role: 'Freelancer', avatar: 'MJ', text: 'The subscription management is a game-changer. I went from chaos to clarity in one afternoon.', rating: 5 },
+    { name: 'Emily Davis', role: 'Startup Founder', avatar: 'ED', text: 'At $19/mo, the Pro plan is incredible value. I use 3 tools daily and my revenue tracking is flawless.', rating: 5 }
+  ]
+
+  const pricingPlans = [
+    { name: 'Starter', price: '$9', desc: 'Perfect for getting started', features: ['1 micro-tool', 'Basic analytics', 'Email support', '7-day history'], popular: false },
+    { name: 'Pro', price: '$19', desc: 'Best for growing solopreneurs', features: ['3 micro-tools', 'Advanced analytics', 'Custom domain', '30-day history', 'Priority support'], popular: true },
+    { name: 'Studio', price: '$29', desc: 'For teams & power users', features: ['Unlimited tools', 'Team access (3 seats)', 'Real-time analytics', 'Unlimited history', 'API access', 'Dedicated support'], popular: false }
+  ]
+
+  const faqs = [
+    { q: 'What is a micro-tool?', a: 'A micro-tool is a focused SaaS utility — like an email engine, SEO checker, invoice generator — that solves one problem exceptionally well.' },
+    { q: 'Can I switch plans anytime?', a: 'Yes! Upgrade or downgrade instantly. Changes take effect on your next billing cycle.' },
+    { q: 'Is there a free trial?', a: 'All plans come with a 7-day free trial. No credit card required to start.' }
+  ]
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
-              <span className="text-white font-bold text-lg">PF</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900 overflow-x-hidden">
+      {/* Navigation */}
+      <nav className="border-b border-white/5 bg-black/20 backdrop-blur-md fixed top-0 w-full z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
+              <span className="text-white font-bold text-xs">PF</span>
             </div>
-            <span className="font-semibold text-2xl text-white">PixelForge Hub</span>
+            <span className="font-semibold text-sm text-white">PixelForge Hub</span>
           </div>
-          <h1 className="text-5xl font-bold text-white mb-4">
-            Your Micro-Tool Studio
-          </h1>
-          <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
-            Build, deploy, and manage powerful micro-tools with real-time analytics, billing, and team collaboration.
-          </p>
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="px-8 py-3 text-lg font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-lg hover:from-[#6D28D9] hover:to-[#D97706] transition-all duration-200"
-          >
-            Get Started
-          </button>
+          <div className="flex items-center gap-4">
+            <a href="#features" className="text-xs text-slate-400 hover:text-slate-200 transition-colors">Features</a>
+            <a href="#pricing" className="text-xs text-slate-400 hover:text-slate-200 transition-colors">Pricing</a>
+            <button
+              onClick={onGetStarted}
+              className="text-xs font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] px-4 py-2 rounded-lg hover:from-[#6D28D9] hover:to-[#D97706] transition-all duration-200"
+            >
+              Sign In
+            </button>
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
-          <div className="glass p-6 text-center fade-in">
-            <div className="p-3 rounded-lg bg-[#7C3AED]/10 text-[#7C3AED] w-fit mx-auto mb-4">
-              <Zap size={24} />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-200 mb-2">Micro-Tools</h3>
-            <p className="text-sm text-slate-400">Create custom tools for email, SEO, invoicing, and more in seconds.</p>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 bg-[#7C3AED]/10 border border-[#7C3AED]/20 px-4 py-1.5 rounded-full mb-6 animate-[fadeIn_0.6s_ease]">
+            <Sparkles size={14} className="text-[#F59E0B]" />
+            <span className="text-xs text-[#F59E0B] font-medium">Now in beta — 7-day free trial</span>
           </div>
-          <div className="glass p-6 text-center fade-in" style={{ animationDelay: '0.1s' }}>
-            <div className="p-3 rounded-lg bg-[#F59E0B]/10 text-[#F59E0B] w-fit mx-auto mb-4">
-              <BarChart3 size={24} />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-200 mb-2">Analytics</h3>
-            <p className="text-sm text-slate-400">Track usage, revenue, and performance with beautiful dashboards.</p>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight animate-[fadeIn_0.8s_ease]">
+            Your <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Micro-Tool</span> Studio
+          </h1>
+          <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-3xl mx-auto animate-[fadeIn_1s_ease]">
+            Build, deploy, and manage powerful SaaS micro-tools for solopreneurs. 
+            Real-time analytics, automated billing, and seamless team collaboration — all from $9/mo.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-[fadeIn_1.2s_ease]">
+            <button
+              onClick={onGetStarted}
+              className="px-8 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-lg hover:from-[#6D28D9] hover:to-[#D97706] transition-all duration-200 shadow-lg shadow-[#7C3AED]/20 flex items-center gap-2"
+            >
+              <Rocket size={18} />
+              Start Free Trial
+            </button>
+            <button
+              onClick={() => setShowDemo(true)}
+              className="px-8 py-3.5 text-base font-medium text-slate-300 border border-white/10 rounded-lg hover:bg-white/5 hover:text-white transition-all duration-200 flex items-center gap-2"
+            >
+              <Play size={18} />
+              See How It Works
+            </button>
           </div>
-          <div className="glass p-6 text-center fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 w-fit mx-auto mb-4">
-              <Users size={24} />
+          <div className="mt-10 flex items-center justify-center gap-8 text-xs text-slate-500 animate-[fadeIn_1.4s_ease]">
+            <div className="flex items-center gap-1.5">
+              <Shield size={14} className="text-emerald-400" />
+              <span>No credit card</span>
             </div>
-            <h3 className="text-lg font-semibold text-slate-200 mb-2">Team Access</h3>
-            <p className="text-sm text-slate-400">Collaborate with your team and manage subscriptions together.</p>
+            <div className="flex items-center gap-1.5">
+              <Clock size={14} className="text-emerald-400" />
+              <span>Cancel anytime</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Users size={14} className="text-emerald-400" />
+              <span>1,200+ solopreneurs</span>
+            </div>
           </div>
+        </div>
+
+        {/* Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
+          {[
+            { value: '12K+', label: 'Active Users', icon: Users },
+            { value: '8.4K', label: 'Tools Deployed', icon: Zap },
+            { value: '$289K', label: 'Monthly Revenue', icon: DollarSign },
+            { value: '99.9%', label: 'Uptime SLA', icon: Activity }
+          ].map((stat, i) => (
+            <div key={i} className="glass p-5 text-center fade-in hover:bg-white/[0.04] transition-all" style={{ animationDelay: `${i * 0.1}s` }}>
+              <stat.icon size={20} className="mx-auto text-[#7C3AED] mb-2" />
+              <div className="text-2xl font-bold text-white">{stat.value}</div>
+              <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* Features Section */}
+      <div id="features" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Everything You Need to Build & Scale</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto">Three powerful tools. One unified dashboard. Zero complexity.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { icon: Zap, title: 'Micro-Tools Builder', desc: 'Create custom tools for email campaigns, SEO audits, invoice generation, and social scheduling — all in seconds.', color: '#7C3AED' },
+            { icon: BarChart3, title: 'Real-Time Analytics', desc: 'Track usage, revenue, user growth, and API calls with beautiful live charts and exportable reports.', color: '#F59E0B' },
+            { icon: Users, title: 'Team Collaboration', desc: 'Invite team members, assign roles, manage permissions, and work together seamlessly from any device.', color: '#10B981' }
+          ].map((feat, i) => (
+            <div key={i} className="glass p-8 fade-in hover:bg-white/[0.04] transition-all duration-200 group" style={{ animationDelay: `${i * 0.15}s` }}>
+              <div className="p-3 rounded-lg w-fit mb-4 transition-colors" style={{ backgroundColor: `${feat.color}15`, color: feat.color }}>
+                <feat.icon size={28} />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-3">{feat.title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{feat.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Testimonials */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-14">
+          <Quote size={32} className="mx-auto text-[#7C3AED] mb-4" />
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Loved by Solopreneurs</h2>
+          <p className="text-slate-400">See what our early users are saying</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {(testimonials || []).map((t, i) => (
+            <div key={i} className="glass p-6 fade-in hover:bg-white/[0.04] transition-all" style={{ animationDelay: `${i * 0.15}s` }}>
+              <div className="flex gap-0.5 mb-4">
+                {Array.from({ length: t.rating }).map((_, ri) => (
+                  <Star key={ri} size={14} className="text-[#F59E0B] fill-[#F59E0B]" />
+                ))}
+              </div>
+              <p className="text-sm text-slate-300 mb-6 leading-relaxed">"{t.text}"</p>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center text-white text-xs font-medium">{t.avatar}</div>
+                <div>
+                  <p className="text-sm font-medium text-white">{t.name}</p>
+                  <p className="text-xs text-slate-400">{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Simple, Transparent Pricing</h2>
+          <p className="text-slate-400">Start free. Upgrade when you grow. No hidden fees.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {(pricingPlans || []).map((plan, i) => (
+            <div key={i} className={`glass p-8 fade-in relative ${plan.popular ? 'border-[#F59E0B]/40 shadow-lg shadow-[#F59E0B]/5' : ''} hover:bg-white/[0.04] transition-all duration-200`} style={{ animationDelay: `${i * 0.15}s` }}>
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] text-white text-xs font-semibold px-4 py-1 rounded-full">
+                  Most Popular
+                </div>
+              )}
+              <h3 className="text-lg font-semibold text-white mb-1">{plan.name}</h3>
+              <p className="text-xs text-slate-400 mb-4">{plan.desc}</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold text-white">{plan.price}</span>
+                <span className="text-slate-400 text-sm ml-1">/mo</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                {(plan.features || []).map((f, fi) => (
+                  <li key={fi} className="flex items-center gap-2 text-xs text-slate-300">
+                    <CheckCircle size={14} className="text-emerald-400 flex-shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={onGetStarted}
+                className={`w-full py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  plan.popular
+                    ? 'text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] hover:from-[#6D28D9] hover:to-[#D97706]'
+                    : 'text-[#7C3AED] border border-[#7C3AED]/30 hover:bg-[#7C3AED]/10'
+                }`}
+              >
+                {plan.popular ? 'Start Free Trial' : 'Get Started'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-white text-center mb-10">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          {(faqs || []).map((faq, i) => (
+            <details key={i} className="glass p-5 group cursor-pointer">
+              <summary className="text-sm font-medium text-white flex items-center justify-between">
+                {faq.q}
+                <ChevronDown size={16} className="text-slate-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <p className="text-xs text-slate-400 mt-3 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
+        <div className="glass p-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Build Your First Micro-Tool?</h2>
+          <p className="text-slate-400 mb-8 max-w-xl mx-auto">Join 1,200+ solopreneurs. Start your 7-day free trial today — no credit card required.</p>
+          <button
+            onClick={onGetStarted}
+            className="px-10 py-3.5 text-base font-semibold text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-lg hover:from-[#6D28D9] hover:to-[#D97706] transition-all duration-200 shadow-lg shadow-[#7C3AED]/20 inline-flex items-center gap-2"
+          >
+            <Rocket size={18} />
+            Start Building Now
+            <ArrowRight size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-white/5 py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
+              <span className="text-white font-bold text-xs">PF</span>
+            </div>
+            <span className="text-sm text-slate-400">© 2025 PixelForge Studios</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <span className="text-xs text-slate-500 hover:text-slate-300 cursor-pointer">Privacy</span>
+            <span className="text-xs text-slate-500 hover:text-slate-300 cursor-pointer">Terms</span>
+            <span className="text-xs text-slate-500 hover:text-slate-300 cursor-pointer">Contact</span>
+            <div className="flex gap-3 ml-4">
+              <Twitter size={16} className="text-slate-500 hover:text-[#7C3AED] cursor-pointer transition-colors" />
+              <Linkedin size={16} className="text-slate-500 hover:text-[#7C3AED] cursor-pointer transition-colors" />
+              <Github size={16} className="text-slate-500 hover:text-[#7C3AED] cursor-pointer transition-colors" />
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* Demo Modal */}
+      {showDemo && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDemo(false)}>
+          <div className="glass p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center mx-auto mb-4">
+                <Play size={28} className="text-white ml-1" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">How PixelForge Works</h3>
+              <p className="text-sm text-slate-400 mb-6">Choose a tool → configure it → deploy in seconds. Watch the walkthrough below.</p>
+              <div className="glass p-12 text-center mb-4">
+                <Film size={40} className="mx-auto text-slate-500 mb-3" />
+                <p className="text-xs text-slate-400">Demo video coming soon</p>
+              </div>
+              <button onClick={() => setShowDemo(false)} className="text-sm text-[#7C3AED] hover:underline">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
