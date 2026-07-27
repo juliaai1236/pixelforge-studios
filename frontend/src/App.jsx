@@ -621,6 +621,12 @@ function Dashboard({ user, onLogout }) {
   const [chartData, setChartData] = useState(defaultChartData)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [username, setUsername] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const [activeTab, setActiveTab] = useState('overview')
+  const [notifications, setNotifications] = useState([])
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const safeActivity = Array.isArray(activity) ? activity : []
 
