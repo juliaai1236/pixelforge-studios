@@ -654,11 +654,6 @@ function Dashboard({ user, onLogout }) {
   const [chartData, setChartData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [username, setUsername] = useState('')
-  const [userEmail, setUserEmail] = useState('')
-  const [activeTab, setActiveTab] = useState('overview')
-  const [notifications, setNotifications] = useState([])
-  const [showNotifications, setShowNotifications] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
   const safeActivity = Array.isArray(activity) ? activity : []
@@ -703,7 +698,7 @@ function Dashboard({ user, onLogout }) {
   }, [])
 
   const kpis = useMemo(() => {
-    if (!metrics || metrics.length === 0) return []
+    if (!metrics || !metrics.tools && !metrics.tools === 0 && !metrics.users && !metrics.revenue && !metrics.api_calls) return []
     return [
       { icon: Activity, label: 'Active Tools', value: metrics.tools || 0, delta: 12.5, prefix: '' },
       { icon: Users, label: 'Total Users', value: metrics.users || 0, delta: 8.3, prefix: '' },
