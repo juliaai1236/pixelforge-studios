@@ -387,7 +387,7 @@ function QuickActions() {
     <div className="space-y-3">
       <h3 className="text-sm font-semibold text-slate-200">Quick Actions</h3>
       <div className="space-y-2">
-        {(tools || []).map((tool, i) => (
+        {((tools ?? []) || []).map((tool, i) => (
           <div key={i} className="glass p-3 flex items-center justify-between fade-in hover:bg-white/[0.04] transition-all duration-200 cursor-pointer" style={{ animationDelay: `${i * 0.1}s` }}>
             <div className="flex items-center gap-3">
               <div className={`p-1.5 rounded-lg ${tool.active ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-400'}`}>
