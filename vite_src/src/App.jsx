@@ -1460,7 +1460,11 @@ function App() {
       <Sidebar activePage={activePage} setActivePage={setActivePage} onLogout={handleLogout} />
       {activePage === 'dashboard' && <Dashboard user={user} onLogout={handleLogout} />}
       {activePage === 'tools' && <ToolsPage />}
+      {activePage === 'leads' && <LeadsPage />}
       {activePage === 'subscriptions' && <SubscriptionsPage />}
+      {activePage === 'analytics' && <AnalyticsPage />}
+      {activePage === 'reports' && <ReportsPage />}
+      {activePage === 'settings' && <Dashboard user={user} onLogout={handleLogout} />}
     </div>
   )
 }
