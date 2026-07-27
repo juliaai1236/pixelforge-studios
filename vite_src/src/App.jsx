@@ -380,7 +380,7 @@ function QuickActions() {
   ])
 
   const toggleTool = (index) => {
-    setTools(prev => prev.map((t, i) => i === index ? { ...t, active: !t.active } : t))
+    setTools(prev => (prev ?? []).map((t, i) => i === index ? { ...t, active: !t.active } : t))
   }
 
   return (
