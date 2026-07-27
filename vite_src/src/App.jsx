@@ -92,6 +92,7 @@ function Sidebar({ activePage, setActivePage, onLogout }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'tools', label: 'Micro-Tools', icon: Zap },
+    { id: 'leads', label: 'Leads', icon: Users },
     { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'reports', label: 'Reports', icon: FileText },
