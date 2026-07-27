@@ -1336,13 +1336,78 @@ function LeadsPage() {
   )
 }
 
-function ProductApp({ user, onLogout }) {
-  /* NC_PLACEHOLDER_DASHBOARD — replaced by the real dashboard in Phase 2 */
+function ProductApp({ user, token, onLogout }) {
+  const [activePage, setActivePage] = useState('dashboard');
+
+  const renderPage = () => {
+    switch (activePage) {
+      case 'dashboard':
+        return <Dashboard user={user} onLogout={onLogout} />;
+      case 'tools':
+        return <ToolsPage />;
+      case 'leads':
+        return <LeadsPage />;
+      case 'subscriptions':
+        return <SubscriptionsPage />;
+      case 'analytics':
+        return (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TopBar userName={user?.name || user?.email || 'User'} userEmail={user?.email || ''} />
+            <main className="flex-1 overflow-y-auto p-6">
+              <h2 className="text-lg font-semibold text-slate-200 mb-6">Analytics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="glass p-5">
+                  <h3 className="text-sm font-semibold text-slate-200 mb-4">Revenue Trend</h3>
+                  <div className="h-[200px]"><LineChart data={defaultChartData} /></div>
+                </div>
+                <div className="glass p-5">
+                  <h3 className="text-sm font-semibold text-slate-200 mb-4">Usage Breakdown</h3>
+                  <div className="h-[200px]"><BarChart data={defaultChartData} /></div>
+                </div>
+              </div>
+            </main>
+          </div>
+        );
+      case 'reports':
+        return <ReportsPage />;
+      case 'settings':
+        return (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TopBar userName={user?.name || user?.email || 'User'} userEmail={user?.email || ''} />
+            <main className="flex-1 overflow-y-auto p-6">
+              <h2 className="text-lg font-semibold text-slate-200 mb-6">Settings</h2>
+              <div className="glass p-6 space-y-4">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-200 mb-1">Account Email</h3>
+                  <p className="text-xs text-slate-400">{user?.email || 'N/A'}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-200 mb-1">Name</h3>
+                  <p className="text-xs text-slate-400">{user?.name || 'Not set'}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-200 mb-1">Plan</h3>
+                  <p className="text-xs text-slate-400 capitalize">{user?.plan || 'free'}</p>
+                </div>
+                <button
+                  onClick={onLogout}
+                  className="px-4 py-2 text-sm font-medium text-red-400 border border-red-400/20 rounded-lg hover:bg-red-500/10 transition-all duration-200"
+                >
+                  Logout
+                </button>
+              </div>
+            </main>
+          </div>
+        );
+      default:
+        return <Dashboard user={user} onLogout={onLogout} />;
+    }
+  };
+
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0d18', color: '#e6eaf2', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
-      <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>Welcome, {user?.name || user?.email || 'there'} 👋</h1>
-      <p style={{ color: '#9aa6bd', maxWidth: 460, lineHeight: 1.5, margin: 0 }}>Your account is ready. Your dashboard is being set up and will appear here shortly.</p>
-      <button onClick={onLogout} style={{ marginTop: 8, padding: '10px 18px', borderRadius: 10, border: '1px solid #2a3350', background: 'transparent', color: '#e6eaf2', fontWeight: 600, cursor: 'pointer' }}>Log out</button>
+    <div className="flex h-screen bg-[#0a0d18] text-slate-200 overflow-hidden">
+      <Sidebar activePage={activePage} setActivePage={setActivePage} onLogout={onLogout} />
+      {renderPage()}
     </div>
   );
 }
