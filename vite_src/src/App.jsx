@@ -4,14 +4,15 @@ import { LayoutDashboard, BarChart3, FileText, Bell, User, ChevronDown, Trending
 const BASE = window.__BACKEND_URL__ || 'https://tu-backend-url.com'
 
 async function apiFetch(path, opts = {}) {
+  const BASE = window.__BACKEND_URL__ || '';
   for (let i = 0; i < 5; i++) {
     try {
-      const r = await fetch(BASE + path, opts)
-      if (r.ok) return r.json()
+      const r = await fetch(BASE + path, opts);
+      if (r.ok) return r.json();
     } catch (_) {}
-    await new Promise(r => setTimeout(r, 1500))
+    await new Promise(r => setTimeout(r, 1500));
   }
-  return null
+  return null;
 }
 
 const defaultKPIs = [
@@ -111,7 +112,7 @@ function Sidebar({ activePage, setActivePage, onLogout }) {
       </div>
 
       <nav className="flex-1 py-4 px-3 space-y-1">
-        {navItems.map(item => (
+        {(navItems ?? []).map(item => (
           <button
             key={item.id}
             onClick={() => setActivePage(item.id)}
@@ -225,17 +226,17 @@ function LineChart({ data = defaultChartData }) {
   const chartHeight = height - padding.top - padding.bottom
 
   const nums = (data || []).map(v => typeof v === 'number' ? v : 0)
-  const max = nums.length ? Math.max(...nums) : 0
-  const min = nums.length ? Math.min(...nums) : 0
+  const max = nums.length ? Math.max(...(Array.isArray(nums) && nums.length ? nums : [0])) : 0
+  const min = nums.length ? Math.min(...(Array.isArray(nums) && nums.length ? nums : [0])) : 0
   const range = max - min || 1
   const xStep = chartWidth / (nums.length - 1 || 1)
 
-  const points = nums.map((v, i) => ({
+  const points = (nums || []).map((v, i) => ({
     x: padding.left + i * xStep,
     y: padding.top + chartHeight - ((v - min) / range) * chartHeight
   }))
 
-  const linePath = points.map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(' ')
+  const linePath = (points || []).map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(' ')
 
   const areaPath = `${linePath} L${points[points.length - 1].x},${padding.top + chartHeight} L${points[0].x},${padding.top + chartHeight} Z`
 
@@ -249,7 +250,7 @@ function LineChart({ data = defaultChartData }) {
       </defs>
       <path d={areaPath} fill="url(#lineGradient)" opacity={0.6} className="animate-[fadeIn_0.6s_ease]"/>
       <path d={linePath} fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-[fadeIn_0.8s_ease]"/>
-      {points.map((p, i) => (
+      {(points || []).map((p, i) => (
         <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#7C3AED" className="animate-[fadeIn_1s_ease]"/>
       ))}
     </svg>
@@ -265,7 +266,7 @@ function BarChart({ data = defaultChartData }) {
   const chartHeight = height - padding.top - padding.bottom
 
   const nums = (data || []).map(v => typeof v === 'number' ? v : 0)
-  const max = nums.length ? Math.max(...nums) : 0
+  const max = nums.length ? Math.max(...(Array.isArray(nums) && nums.length ? nums : [0])) : 0
   const barWidth = chartWidth / nums.length * 0.6
   const gap = chartWidth / nums.length * 0.4
 
@@ -277,7 +278,7 @@ function BarChart({ data = defaultChartData }) {
           <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.8" />
         </linearGradient>
       </defs>
-      {nums.map((v, i) => {
+      {(nums || []).map((v, i) => {
         const barHeight = (v / max) * chartHeight
         const x = padding.left + i * (barWidth + gap) + gap / 2
         const y = padding.top + chartHeight - barHeight
@@ -347,7 +348,7 @@ function DataTable({ data = [], onSort, sortField, sortDir }) {
             </tr>
           </thead>
           <tbody>
-            {safeData.map((row, i) => {
+            {(safeData || []).map((row, i) => {
               const StatusIcon = statusIcons[row.status] || CheckCircle
               return (
                 <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors duration-150">
@@ -372,12 +373,7 @@ function DataTable({ data = [], onSort, sortField, sortDir }) {
 }
 
 function QuickActions() {
-  const [tools, setTools] = useState([
-    { name: 'Email Engine', active: true, icon: Play },
-    { name: 'SEO Scout', active: false, icon: Pause },
-    { name: 'Invoice Pro', active: true, icon: Play },
-    { name: 'Social Scheduler', active: false, icon: Pause }
-  ])
+  const [tools, setTools] = useState([])
 
   const toggleTool = (index) => {
     setTools(prev => (prev ?? []).map((t, i) => i === index ? { ...t, active: !t.active } : t))
@@ -654,7 +650,7 @@ function Dashboard({ user, onLogout }) {
   const [sortField, setSortField] = useState('time')
   const [sortDir, setSortDir] = useState('asc')
   const [activity, setActivity] = useState(defaultActivity)
-  const [metrics, setMetrics] = useState(null)
+  const [metrics, setMetrics] = useState([])
   const [chartData, setChartData] = useState(defaultChartData)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -728,7 +724,7 @@ function Dashboard({ user, onLogout }) {
     let filtered = [...(safeActivity ?? [])]
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      filtered = filtered.filter(row =>
+      filtered = (filtered || []).filter(row =>
         (row.tool || '').toLowerCase().includes(q) ||
         (row.action || '').toLowerCase().includes(q) ||
         (row.user || '').toLowerCase().includes(q) ||
@@ -1340,184 +1336,83 @@ function LeadsPage() {
   )
 }
 
-function App() {
-  const [showLanding, setShowLanding] = useState(true)
-  const [user, setUser] = useState(null)
-  const [activePage, setActivePage] = useState('dashboard')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loginError, setLoginError] = useState('')
-  const [loggingIn, setLoggingIn] = useState(false)
-
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    if (!email.trim() || !password.trim()) {
-      setLoginError('Please enter email and password')
-      return
-    }
-    setLoggingIn(true)
-    setLoginError('')
-    const result = await apiFetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.trim(), password: password.trim() })
-    })
-    setLoggingIn(false)
-    if (result && result.token) {
-      setUser({ email: email.trim(), name: result.name || email.trim(), token: result.token })
-    } else {
-      setLoginError('Invalid credentials. Try again')
-    }
-  }
-
-  const handleLogout = () => {
-    setUser(null)
-    setEmail('')
-    setPassword('')
-    setActivePage('dashboard')
-  }
-
-  const [showRegister, setShowRegister] = useState(false)
-  const [regName, setRegName] = useState('')
-  const [regEmail, setRegEmail] = useState('')
-  const [regPassword, setRegPassword] = useState('')
-  const [regError, setRegError] = useState('')
-  const [registering, setRegistering] = useState(false)
-
-  const handleRegister = async (e) => {
-    e.preventDefault()
-    if (!regName.trim() || !regEmail.trim() || !regPassword.trim()) {
-      setRegError('Please fill all fields')
-      return
-    }
-    setRegistering(true)
-    setRegError('')
-    const result = await apiFetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: regName.trim(), email: regEmail.trim(), password: regPassword.trim() })
-    })
-    setRegistering(false)
-    if (result && result.token) {
-      setUser({ name: result.name || regName.trim(), email: regEmail.trim(), token: result.token })
-      setShowRegister(false)
-      setRegName('')
-      setRegEmail('')
-      setRegPassword('')
-    } else {
-      setRegError('Registration failed. Try again.')
-    }
-  }
-
-  if (showLanding) {
-    return <LandingPage onGetStarted={() => setShowLanding(false)} />
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900">
-        <div className="glass p-8 w-full max-w-sm fade-in">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
-              <span className="text-white font-bold text-xs">PF</span>
-            </div>
-            <span className="font-semibold text-lg">PixelForge Hub</span>
-          </div>
-          {!showRegister ? (
-            <>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-                />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-                />
-                {loginError && <p className="text-xs text-red-400">{loginError}</p>}
-                <button
-                  type="submit"
-                  disabled={loggingIn}
-                  className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  {loggingIn ? 'Signing in...' : 'Sign In'}
-                </button>
-              </form>
-              <div className="mt-3">
-                <button
-                  onClick={() => setShowRegister(true)}
-                  className="w-full py-2.5 text-sm font-medium text-[#7C3AED] border border-[#7C3AED]/30 rounded-lg hover:bg-[#7C3AED]/5 transition-all duration-200"
-                >
-                  Register
-                </button>
-              </div>
-              <p className="text-xs text-slate-500 text-center mt-4">
-                Enter any email and password to continue
-              </p>
-            </>
-          ) : (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <input
-                type="text"
-                value={regName}
-                onChange={(e) => setRegName(e.target.value)}
-                placeholder="Name"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-              />
-              <input
-                type="email"
-                value={regEmail}
-                onChange={(e) => setRegEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-              />
-              <input
-                type="password"
-                value={regPassword}
-                onChange={(e) => setRegPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-              />
-              {regError && <p className="text-xs text-red-400">{regError}</p>}
-              <button
-                type="submit"
-                disabled={registering}
-                className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-              >
-                {registering ? 'Registering...' : 'Register'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowRegister(false)}
-                className="w-full py-2 text-sm text-slate-400 hover:text-slate-200 transition-all duration-200"
-              >
-                Back to Login
-              </button>
-            </form>
-          )}
-        </div>
-      </div>
-    )
-  }
-
+function ProductApp({ user, onLogout }) {
+  /* NC_PLACEHOLDER_DASHBOARD — replaced by the real dashboard in Phase 2 */
   return (
-    <div className="min-h-screen flex bg-[#0f0f1a] text-slate-200">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} onLogout={handleLogout} />
-      {activePage === 'dashboard' && <Dashboard user={user} onLogout={handleLogout} />}
-      {activePage === 'tools' && <ToolsPage />}
-      {activePage === 'leads' && <LeadsPage />}
-      {activePage === 'subscriptions' && <SubscriptionsPage />}
-      {activePage === 'analytics' && <AnalyticsPage />}
-      {activePage === 'reports' && <ReportsPage />}
-      {activePage === 'settings' && <Dashboard user={user} onLogout={handleLogout} />}
+    <div style={{ minHeight: '100vh', background: '#0a0d18', color: '#e6eaf2', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
+      <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>Welcome, {user?.name || user?.email || 'there'} 👋</h1>
+      <p style={{ color: '#9aa6bd', maxWidth: 460, lineHeight: 1.5, margin: 0 }}>Your account is ready. Your dashboard is being set up and will appear here shortly.</p>
+      <button onClick={onLogout} style={{ marginTop: 8, padding: '10px 18px', borderRadius: 10, border: '1px solid #2a3350', background: 'transparent', color: '#e6eaf2', fontWeight: 600, cursor: 'pointer' }}>Log out</button>
     </div>
-  )
+  );
 }
 
-export default App
+function AuthGate({ onAuth, onClose }) {
+  const [mode, setMode] = useState('signup');
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const _ip = { width: '100%', padding: '11px 13px', margin: '6px 0', borderRadius: 9, border: '1px solid #2a3350', background: '#0b1020', color: '#e6eaf2', fontSize: 14, outline: 'none', boxSizing: 'border-box' };
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.email || !form.password) return;
+    setLoading(true); setError('');
+    const _b = window.__NC_BASE__ || ''; const _s = window.__COMPANY_SLUG__ || '';
+    const body = JSON.stringify({ email: form.email, password: form.password, name: form.name });
+    const _call = () => fetch(`${_b}/api/c/${_s}/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    try {
+      let res; try { res = await _call(); } catch { await new Promise(r => setTimeout(r, 2500)); res = await _call(); }
+      const json = await res.json();
+      if (!json.ok) { setError(json.error || 'Authentication failed — please try again'); setLoading(false); return; }
+      onAuth(json);
+    } catch { setError('Connection error — please try again in a moment.'); setLoading(false); }
+  };
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,18,.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+      <form onClick={(e) => e.stopPropagation()} onSubmit={submit} style={{ background: '#0f1424', border: '1px solid #232b45', padding: 28, borderRadius: 16, width: 360, maxWidth: '90vw', color: '#e6eaf2' }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: 20, fontWeight: 700 }}>{mode === 'signup' ? 'Create your account' : 'Welcome back'}</h3>
+        {mode === 'signup' && <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" style={_ip} />}
+        <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Work email" type="email" required style={_ip} />
+        <input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password (min 6 chars)" type="password" required style={_ip} />
+        {error && <p style={{ color: '#f87171', fontSize: 13, margin: '6px 0 0' }}>{error}</p>}
+        <button type="submit" disabled={loading} style={{ width: '100%', marginTop: 10, padding: '12px', borderRadius: 9, border: 'none', background: loading ? '#4b50b8' : '#6366f1', color: '#fff', fontWeight: 700, fontSize: 15, cursor: loading ? 'default' : 'pointer' }}>
+          {loading ? '…' : mode === 'signup' ? 'Get started free' : 'Log in'}
+        </button>
+        <p onClick={() => { setMode(mode === 'signup' ? 'login' : 'signup'); setError(''); }} style={{ marginTop: 14, fontSize: 13, color: '#9aa6bd', cursor: 'pointer', textAlign: 'center' }}>
+          {mode === 'signup' ? 'Already have an account? Log in' : 'New here? Create an account'}
+        </p>
+      </form>
+    </div>
+  );
+}
+
+function App() {
+  const [auth, setAuth] = useState(() => {
+    try {
+      if (localStorage.getItem('nc_user') && !localStorage.getItem('nc_auth')) localStorage.removeItem('nc_user');
+      const a = JSON.parse(localStorage.getItem('nc_auth') || 'null');
+      return (a && a.token && a.user && typeof a.user.email === 'string') ? a : null;
+    } catch { return null; }
+  });
+  const [showAuth, setShowAuth] = useState(false);
+  useEffect(() => {
+    if (!auth?.token) return;
+    const _b = window.__NC_BASE__ || ''; const _s = window.__COMPANY_SLUG__ || '';
+    fetch(`${_b}/api/c/${_s}/auth/me`, { headers: { Authorization: `Bearer ${auth.token}` } })
+      .then(r => r.json()).then(d => { if (!d.ok) { localStorage.removeItem('nc_auth'); setAuth(null); } }).catch(() => {});
+  }, []);
+  const onAuth = (data) => { localStorage.setItem('nc_auth', JSON.stringify(data)); setAuth(data); setShowAuth(false); };
+  const onLogout = () => { localStorage.removeItem('nc_auth'); setAuth(null); };
+  if (auth?.user) return <ProductApp user={auth.user} token={auth.token} onLogout={onLogout} />;
+  return (
+    <>
+      <LandingPage onGetStarted={() => setShowAuth(true)} onSignup={() => setShowAuth(true)} onLogin={() => setShowAuth(true)} />
+      {/* Fallback entry point (bottom-right so it never overlaps the nav) — guarantees a
+          working login even if the landing's own buttons aren't wired to the auth modal. */}
+      <button onClick={() => setShowAuth(true)} style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 999, background: '#6366f1', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 999, fontWeight: 600, fontSize: 14, cursor: 'pointer', boxShadow: '0 6px 20px rgba(99,102,241,.45)' }}>Sign in</button>
+      {showAuth && <AuthGate onAuth={onAuth} onClose={() => setShowAuth(false)} />}
+    </>
+  );
+}
+
+export default App;
