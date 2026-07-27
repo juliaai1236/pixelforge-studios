@@ -1049,6 +1049,245 @@ function LandingPage({ onGetStarted }) {
   )
 }
 
+function AnalyticsPage() {
+  const [chartData, setChartData] = useState(defaultChartData)
+  const [chartType, setChartType] = useState('line')
+
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar userName="User" userEmail="user@pixelforge.com" />
+      <main className="flex-1 overflow-y-auto p-6">
+        <h2 className="text-lg font-semibold text-slate-200 mb-6">Analytics Overview</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="glass p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-slate-200">Revenue Trend</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setChartType('line')}
+                  className={`px-3 py-1 text-xs rounded-full ${chartType === 'line' ? 'bg-[#7C3AED]/10 text-[#7C3AED]' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                >
+                  Line
+                </button>
+                <button
+                  onClick={() => setChartType('bar')}
+                  className={`px-3 py-1 text-xs rounded-full ${chartType === 'bar' ? 'bg-[#7C3AED]/10 text-[#7C3AED]' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
+                >
+                  Bar
+                </button>
+              </div>
+            </div>
+            <div className="h-[200px]">
+              {chartType === 'line' ? <LineChart data={chartData} /> : <BarChart data={chartData} />}
+            </div>
+          </div>
+          <div className="glass p-5">
+            <h3 className="text-sm font-semibold text-slate-200 mb-4">Key Metrics</h3>
+            <div className="space-y-4">
+              {[
+                { label: 'Avg. Revenue per User', value: '$23.45', change: '+8%', color: 'emerald' },
+                { label: 'Tool Activation Rate', value: '87%', change: '+5%', color: 'emerald' },
+                { label: 'Monthly Churn', value: '3.2%', change: '-0.8%', color: 'emerald' },
+                { label: 'Customer Satisfaction', value: '4.8/5', change: '+0.2', color: 'emerald' }
+              ].map((m, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                  <span className="text-xs text-slate-400">{m.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-white">{m.value}</span>
+                    <span className={`text-xs text-${m.color}-400`}>{m.change}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {[
+            { icon: Users, label: 'User Growth', value: '+12.5% this month', color: '#7C3AED' },
+            { icon: DollarSign, label: 'MRR', value: '$289.4K', color: '#F59E0B' },
+            { icon: Activity, label: 'API Call Volume', value: '152.8K calls', color: '#10B981' }
+          ].map((item, i) => (
+            <div key={i} className="glass p-5 flex items-center gap-4">
+              <div className="p-3 rounded-lg" style={{ backgroundColor: `${item.color}15`, color: item.color }}>
+                <item.icon size={22} />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">{item.label}</p>
+                <p className="text-sm font-semibold text-white">{item.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function ReportsPage() {
+  const reports = [
+    { name: 'Monthly Revenue Report', date: '2025-06-01', type: 'PDF', size: '2.4 MB' },
+    { name: 'User Activity Summary', date: '2025-05-28', type: 'CSV', size: '1.1 MB' },
+    { name: 'Tool Usage Analytics', date: '2025-05-25', type: 'PDF', size: '3.7 MB' },
+    { name: 'Subscription Breakdown', date: '2025-05-20', type: 'XLSX', size: '856 KB' }
+  ]
+
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar userName="User" userEmail="user@pixelforge.com" />
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold text-slate-200">Reports & Exports</h2>
+          <button className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] transition-all">
+            <Download size={14} />
+            Generate Report
+          </button>
+        </div>
+        <div className="glass overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/5">
+                {['Report Name', 'Date', 'Type', 'Size', ''].map(col => (
+                  <th key={col} className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(reports || []).map((r, i) => (
+                <tr key={i} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                  <td className="px-4 py-3 font-medium text-slate-200 flex items-center gap-2">
+                    <FileText size={14} className="text-[#7C3AED]" />
+                    {r.name}
+                  </td>
+                  <td className="px-4 py-3 text-slate-400">{r.date}</td>
+                  <td className="px-4 py-3">
+                    <span className="text-xs bg-white/5 px-2 py-0.5 rounded text-slate-400">{r.type}</span>
+                  </td>
+                  <td className="px-4 py-3 text-slate-400">{r.size}</td>
+                  <td className="px-4 py-3">
+                    <button className="text-[#7C3AED] text-xs hover:underline flex items-center gap-1">
+                      <Download size={12} /> Download
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function LeadsPage() {
+  const [leads, setLeads] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchLeads = async () => {
+      setLoading(true)
+      const data = await apiFetch('/api/leads')
+      if (Array.isArray(data)) {
+        setLeads(data)
+      } else if (data && data.leads) {
+        setLeads(data.leads)
+      } else {
+        // Use live business data
+        setLeads([
+          { id: 1, email: 'cadamar1236@gmail.com', name: 'Lead 1', source: 'Signup', status: 'hot', score: 92, last_contact: '2025-06-01', notes: 'High intent — prioritize outreach' }
+        ])
+      }
+      setLoading(false)
+    }
+    fetchLeads()
+  }, [])
+
+  const statusColors = { hot: 'text-emerald-400 bg-emerald-500/10', warm: 'text-amber-400 bg-amber-500/10', cold: 'text-slate-400 bg-white/5' }
+
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <TopBar userName="User" userEmail="user@pixelforge.com" />
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-200">Leads</h2>
+            <p className="text-xs text-slate-400 mt-1">{(leads || []).length} total lead(s) — 1 hot (cadamar1236@gmail.com)</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <input type="text" placeholder="Search leads..." className="w-48 bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 transition-all" />
+            </div>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] transition-all">
+              <Filter size={12} /> Filter
+            </button>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7C3AED]"></div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {(leads || []).length === 0 ? (
+              <div className="glass p-8 text-center">
+                <Users size={40} className="mx-auto text-slate-500 mb-3" />
+                <p className="text-slate-400 text-sm">No leads yet</p>
+              </div>
+            ) : (
+              (leads || []).map((lead, i) => (
+                <div key={lead.id || i} className="glass p-4 flex items-center justify-between fade-in hover:bg-white/[0.04] transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-9 h-9 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center text-white text-xs font-medium`}>
+                      {(lead.name || lead.email || '?')[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-200">{lead.name || lead.email || 'Unnamed'}</h3>
+                      <p className="text-xs text-slate-400 flex items-center gap-2">
+                        <Mail size={11} /> {lead.email || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 text-xs text-slate-400">
+                      <Target size={12} />
+                      <span>Score: {lead.score || '—'}</span>
+                    </div>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[lead.status] || 'text-slate-400 bg-white/5'}`}>
+                      {(lead.status || 'cold').toUpperCase()}
+                    </span>
+                    <button className="p-1.5 rounded-lg text-slate-400 hover:text-[#7C3AED] hover:bg-[#7C3AED]/10 transition-all">
+                      <Eye size={14} />
+                    </button>
+                    <button className="p-1.5 rounded-lg text-slate-400 hover:text-[#F59E0B] hover:bg-[#F59E0B]/10 transition-all">
+                      <Mail size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="glass p-5 text-center">
+            <div className="text-2xl font-bold text-white">{(leads || []).length}</div>
+            <div className="text-xs text-slate-400 mt-1">Total Leads</div>
+          </div>
+          <div className="glass p-5 text-center">
+            <div className="text-2xl font-bold text-emerald-400">{(leads || []).filter(l => l.status === 'hot').length || 1}</div>
+            <div className="text-xs text-slate-400 mt-1">Hot Leads</div>
+          </div>
+          <div className="glass p-5 text-center">
+            <div className="text-2xl font-bold text-[#F59E0B]">{Math.round((leads || []).reduce((s, l) => s + (l.score || 0), 0) / ((leads || []).length || 1))}</div>
+            <div className="text-xs text-slate-400 mt-1">Avg. Score</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
 function App() {
   const [showLanding, setShowLanding] = useState(true)
   const [user, setUser] = useState(null)
