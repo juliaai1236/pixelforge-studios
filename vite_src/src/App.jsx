@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { LayoutDashboard, BarChart3, FileText, Bell, User, ChevronDown, TrendingUp, TrendingDown, Users, DollarSign, Activity, Zap, Search, SortAsc, SortDesc, CheckCircle, XCircle, Clock, Play, Pause, RefreshCw, LogOut, Mail, Shield, Globe, CreditCard, ExternalLink, Star, Quote, Target, ArrowRight, Rocket, Sparkles, PieChart, LineChart as LineChartIcon, Database, Settings, Filter, Download, Eye, Edit3, MessageSquare, ThumbsUp, Instagram, Twitter, Linkedin, Github } from 'lucide-react'
+import { LayoutDashboard, BarChart3, FileText, Bell, User, ChevronDown, TrendingUp, TrendingDown, Users, DollarSign, Activity, Zap, Search, SortAsc, SortDesc, CheckCircle, XCircle, Clock, Play, Pause, RefreshCw, LogOut, Mail, Shield, Globe, CreditCard, ExternalLink, Star, Quote, Target, ArrowRight, Rocket, Sparkles, PieChart, LineChart as LineChartIcon, Database, Settings, Filter, Download, Eye, Edit3, MessageSquare, ThumbsUp, Instagram, Twitter, Linkedin, Github, Video } from 'lucide-react'
 
 const BASE = window.__BACKEND_URL__ || 'https://tu-backend-url.com'
 
