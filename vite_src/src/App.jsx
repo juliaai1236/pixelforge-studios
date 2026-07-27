@@ -142,10 +142,28 @@ function Sidebar({ activePage, setActivePage, onLogout }) {
 
 function TopBar({ userName, userEmail }) {
   const [toast, setToast] = useState(null)
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false)
+  const notifRef = useRef(null)
+
+  const notifications = [
+    { id: 1, text: 'New lead: cadamar1236@gmail.com', time: '1 min ago', type: 'lead' },
+    { id: 2, text: 'Email Engine: 1,200 emails sent today', time: '12 min ago', type: 'tool' },
+    { id: 3, text: 'Invoice Pro: new invoice generated', time: '1 hour ago', type: 'billing' }
+  ]
 
   const showToast = useCallback((message) => {
     setToast(message)
     setTimeout(() => setToast(null), 3000)
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotifDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   return (
@@ -155,10 +173,28 @@ function TopBar({ userName, userEmail }) {
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all duration-200 relative">
-          <Bell size={18} />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-[#F59E0B] rounded-full"></span>
-        </button>
+        <div className="relative" ref={notifRef}>
+          <button
+            onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-all duration-200 relative"
+          >
+            <Bell size={18} />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-[#F59E0B] rounded-full"></span>
+          </button>
+          {showNotifDropdown && (
+            <div className="absolute right-0 top-full mt-2 w-72 glass p-3 z-50">
+              <h4 className="text-xs font-semibold text-slate-200 mb-3">Notifications</h4>
+              <div className="space-y-2">
+                {(notifications || []).map(n => (
+                  <div key={n.id} className="p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] transition-colors cursor-pointer">
+                    <p className="text-xs text-slate-300">{n.text}</p>
+                    <p className="text-[10px] text-slate-500 mt-1">{n.time}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer group relative">
           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center text-white text-xs font-medium">
             {(userName || 'U')[0].toUpperCase()}
