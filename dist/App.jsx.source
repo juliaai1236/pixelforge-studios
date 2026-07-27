@@ -760,175 +760,135 @@ function Dashboard({ user, onLogout }) {
   )
 }
 
-function App() {
-  const [user, setUser] = useState(null)
-  const [activePage, setActivePage] = useState('dashboard')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loginError, setLoginError] = useState('')
-  const [loggingIn, setLoggingIn] = useState(false)
-
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    if (!email.trim() || !password.trim()) {
-      setLoginError('Please enter email and password')
-      return
-    }
-    setLoggingIn(true)
-    setLoginError('')
-    const result = await apiFetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.trim(), password: password.trim() })
-    })
-    setLoggingIn(false)
-    if (result && result.token) {
-      setUser({ email: email.trim(), name: result.name || email.trim(), token: result.token })
-    } else {
-      setLoginError('Invalid credentials. Try again')
-    }
-  }
-
-  const handleLogout = () => {
-    setUser(null)
-    setEmail('')
-    setPassword('')
-    setActivePage('dashboard')
-  }
-
-  const [showRegister, setShowRegister] = useState(false)
-  const [regName, setRegName] = useState('')
-  const [regEmail, setRegEmail] = useState('')
-  const [regPassword, setRegPassword] = useState('')
-  const [regError, setRegError] = useState('')
-  const [registering, setRegistering] = useState(false)
-
-  const handleRegister = async (e) => {
-    e.preventDefault()
-    if (!regName.trim() || !regEmail.trim() || !regPassword.trim()) {
-      setRegError('Please fill all fields')
-      return
-    }
-    setRegistering(true)
-    setRegError('')
-    const result = await apiFetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: regName.trim(), email: regEmail.trim(), password: regPassword.trim() })
-    })
-    setRegistering(false)
-    if (result && result.token) {
-      setUser({ name: result.name || regName.trim(), email: regEmail.trim(), token: result.token })
-      setShowRegister(false)
-      setRegName('')
-      setRegEmail('')
-      setRegPassword('')
-    } else {
-      setRegError('Registration failed. Try again.')
-    }
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900">
-        <div className="glass p-8 w-full max-w-sm fade-in">
+function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
-              <span className="text-white font-bold text-xs">PF</span>
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
+              <span className="text-white font-bold text-lg">PF</span>
             </div>
-            <span className="font-semibold text-lg">PixelForge Hub</span>
+            <span className="font-semibold text-2xl text-white">PixelForge Hub</span>
           </div>
-          {!showRegister ? (
-            <>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-                />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-                />
-                {loginError && <p className="text-xs text-red-400">{loginError}</p>}
-                <button
-                  type="submit"
-                  disabled={loggingIn}
-                  className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  {loggingIn ? 'Signing in...' : 'Sign In'}
-                </button>
-              </form>
-              <div className="mt-3">
-                <button
-                  onClick={() => setShowRegister(true)}
-                  className="w-full py-2.5 text-sm font-medium text-[#7C3AED] border border-[#7C3AED]/30 rounded-lg hover:bg-[#7C3AED]/5 transition-all duration-200"
-                >
-                  Register
-                </button>
-              </div>
-              <p className="text-xs text-slate-500 text-center mt-4">
-                Enter any email and password to continue
-              </p>
-            </>
-          ) : (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <input
-                type="text"
-                value={regName}
-                onChange={(e) => setRegName(e.target.value)}
-                placeholder="Name"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-              />
-              <input
-                type="email"
-                value={regEmail}
-                onChange={(e) => setRegEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-              />
-              <input
-                type="password"
-                value={regPassword}
-                onChange={(e) => setRegPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#7C3AED]/40 focus:bg-white/10 transition-all duration-200"
-              />
-              {regError && <p className="text-xs text-red-400">{regError}</p>}
-              <button
-                type="submit"
-                disabled={registering}
-                className="w-full py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-lg hover:from-[#6D28D9] hover:to-[#5B21B6] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-              >
-                {registering ? 'Registering...' : 'Register'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowRegister(false)}
-                className="w-full py-2 text-sm text-slate-400 hover:text-slate-200 transition-all duration-200"
-              >
-                Back to Login
-              </button>
-            </form>
-          )}
+          <h1 className="text-5xl font-bold text-white mb-4">
+            Your Micro-Tool Studio
+          </h1>
+          <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
+            Build, deploy, and manage powerful micro-tools with real-time analytics, billing, and team collaboration.
+          </p>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="px-8 py-3 text-lg font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-lg hover:from-[#6D28D9] hover:to-[#D97706] transition-all duration-200"
+          >
+            Get Started
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
+          <div className="glass p-6 text-center fade-in">
+            <div className="p-3 rounded-lg bg-[#7C3AED]/10 text-[#7C3AED] w-fit mx-auto mb-4">
+              <Zap size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">Micro-Tools</h3>
+            <p className="text-sm text-slate-400">Create custom tools for email, SEO, invoicing, and more in seconds.</p>
+          </div>
+          <div className="glass p-6 text-center fade-in" style={{ animationDelay: '0.1s' }}>
+            <div className="p-3 rounded-lg bg-[#F59E0B]/10 text-[#F59E0B] w-fit mx-auto mb-4">
+              <BarChart3 size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">Analytics</h3>
+            <p className="text-sm text-slate-400">Track usage, revenue, and performance with beautiful dashboards.</p>
+          </div>
+          <div className="glass p-6 text-center fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 w-fit mx-auto mb-4">
+              <Users size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">Team Access</h3>
+            <p className="text-sm text-slate-400">Collaborate with your team and manage subscriptions together.</p>
+          </div>
         </div>
       </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen flex bg-[#0f0f1a] text-slate-200">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} onLogout={handleLogout} />
-      {activePage === 'dashboard' && <Dashboard user={user} onLogout={handleLogout} />}
-      {activePage === 'tools' && <ToolsPage />}
-      {activePage === 'subscriptions' && <SubscriptionsPage />}
     </div>
   )
 }
 
-export default App
+function ProductApp({ user, onLogout }) {
+  /* NC_PLACEHOLDER_DASHBOARD — replaced by the real dashboard in Phase 2 */
+  return (
+    <div style={{ minHeight: '100vh', background: '#0a0d18', color: '#e6eaf2', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24, textAlign: 'center' }}>
+      <h1 style={{ fontSize: 28, fontWeight: 800, margin: 0 }}>Welcome, {user?.name || user?.email || 'there'} 👋</h1>
+      <p style={{ color: '#9aa6bd', maxWidth: 460, lineHeight: 1.5, margin: 0 }}>Your account is ready. Your dashboard is being set up and will appear here shortly.</p>
+      <button onClick={onLogout} style={{ marginTop: 8, padding: '10px 18px', borderRadius: 10, border: '1px solid #2a3350', background: 'transparent', color: '#e6eaf2', fontWeight: 600, cursor: 'pointer' }}>Log out</button>
+    </div>
+  );
+}
+
+function AuthGate({ onAuth, onClose }) {
+  const [mode, setMode] = useState('signup');
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const _ip = { width: '100%', padding: '11px 13px', margin: '6px 0', borderRadius: 9, border: '1px solid #2a3350', background: '#0b1020', color: '#e6eaf2', fontSize: 14, outline: 'none', boxSizing: 'border-box' };
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.email || !form.password) return;
+    setLoading(true); setError('');
+    const _b = window.__NC_BASE__ || ''; const _s = window.__COMPANY_SLUG__ || '';
+    const body = JSON.stringify({ email: form.email, password: form.password, name: form.name });
+    const _call = () => fetch(`${_b}/api/c/${_s}/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    try {
+      let res; try { res = await _call(); } catch { await new Promise(r => setTimeout(r, 2500)); res = await _call(); }
+      const json = await res.json();
+      if (!json.ok) { setError(json.error || 'Authentication failed — please try again'); setLoading(false); return; }
+      onAuth(json);
+    } catch { setError('Connection error — please try again in a moment.'); setLoading(false); }
+  };
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,18,.7)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+      <form onClick={(e) => e.stopPropagation()} onSubmit={submit} style={{ background: '#0f1424', border: '1px solid #232b45', padding: 28, borderRadius: 16, width: 360, maxWidth: '90vw', color: '#e6eaf2' }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: 20, fontWeight: 700 }}>{mode === 'signup' ? 'Create your account' : 'Welcome back'}</h3>
+        {mode === 'signup' && <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Your name" style={_ip} />}
+        <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Work email" type="email" required style={_ip} />
+        <input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Password (min 6 chars)" type="password" required style={_ip} />
+        {error && <p style={{ color: '#f87171', fontSize: 13, margin: '6px 0 0' }}>{error}</p>}
+        <button type="submit" disabled={loading} style={{ width: '100%', marginTop: 10, padding: '12px', borderRadius: 9, border: 'none', background: loading ? '#4b50b8' : '#6366f1', color: '#fff', fontWeight: 700, fontSize: 15, cursor: loading ? 'default' : 'pointer' }}>
+          {loading ? '…' : mode === 'signup' ? 'Get started free' : 'Log in'}
+        </button>
+        <p onClick={() => { setMode(mode === 'signup' ? 'login' : 'signup'); setError(''); }} style={{ marginTop: 14, fontSize: 13, color: '#9aa6bd', cursor: 'pointer', textAlign: 'center' }}>
+          {mode === 'signup' ? 'Already have an account? Log in' : 'New here? Create an account'}
+        </p>
+      </form>
+    </div>
+  );
+}
+
+function App() {
+  const [auth, setAuth] = useState(() => {
+    try {
+      if (localStorage.getItem('nc_user') && !localStorage.getItem('nc_auth')) localStorage.removeItem('nc_user');
+      const a = JSON.parse(localStorage.getItem('nc_auth') || 'null');
+      return (a && a.token && a.user && typeof a.user.email === 'string') ? a : null;
+    } catch { return null; }
+  });
+  const [showAuth, setShowAuth] = useState(false);
+  useEffect(() => {
+    if (!auth?.token) return;
+    const _b = window.__NC_BASE__ || ''; const _s = window.__COMPANY_SLUG__ || '';
+    fetch(`${_b}/api/c/${_s}/auth/me`, { headers: { Authorization: `Bearer ${auth.token}` } })
+      .then(r => r.json()).then(d => { if (!d.ok) { localStorage.removeItem('nc_auth'); setAuth(null); } }).catch(() => {});
+  }, []);
+  const onAuth = (data) => { localStorage.setItem('nc_auth', JSON.stringify(data)); setAuth(data); setShowAuth(false); };
+  const onLogout = () => { localStorage.removeItem('nc_auth'); setAuth(null); };
+  if (auth?.user) return <ProductApp user={auth.user} token={auth.token} onLogout={onLogout} />;
+  return (
+    <>
+      <LandingPage onGetStarted={() => setShowAuth(true)} onSignup={() => setShowAuth(true)} onLogin={() => setShowAuth(true)} />
+      {/* Fallback entry point (bottom-right so it never overlaps the nav) — guarantees a
+          working login even if the landing's own buttons aren't wired to the auth modal. */}
+      <button onClick={() => setShowAuth(true)} style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 999, background: '#6366f1', color: '#fff', border: 'none', padding: '10px 18px', borderRadius: 999, fontWeight: 600, fontSize: 14, cursor: 'pointer', boxShadow: '0 6px 20px rgba(99,102,241,.45)' }}>Sign in</button>
+      {showAuth && <AuthGate onAuth={onAuth} onClose={() => setShowAuth(false)} />}
+    </>
+  );
+}
+
+export default App;
