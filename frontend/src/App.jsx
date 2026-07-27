@@ -764,7 +764,60 @@ function Dashboard({ user, onLogout }) {
   )
 }
 
+function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#0f0f1a] to-slate-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] flex items-center justify-center">
+              <span className="text-white font-bold text-lg">PF</span>
+            </div>
+            <span className="font-semibold text-2xl text-white">PixelForge Hub</span>
+          </div>
+          <h1 className="text-5xl font-bold text-white mb-4">
+            Your Micro-Tool Studio
+          </h1>
+          <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
+            Build, deploy, and manage powerful micro-tools with real-time analytics, billing, and team collaboration.
+          </p>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="px-8 py-3 text-lg font-medium text-white bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-lg hover:from-[#6D28D9] hover:to-[#D97706] transition-all duration-200"
+          >
+            Get Started
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
+          <div className="glass p-6 text-center fade-in">
+            <div className="p-3 rounded-lg bg-[#7C3AED]/10 text-[#7C3AED] w-fit mx-auto mb-4">
+              <Zap size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">Micro-Tools</h3>
+            <p className="text-sm text-slate-400">Create custom tools for email, SEO, invoicing, and more in seconds.</p>
+          </div>
+          <div className="glass p-6 text-center fade-in" style={{ animationDelay: '0.1s' }}>
+            <div className="p-3 rounded-lg bg-[#F59E0B]/10 text-[#F59E0B] w-fit mx-auto mb-4">
+              <BarChart3 size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">Analytics</h3>
+            <p className="text-sm text-slate-400">Track usage, revenue, and performance with beautiful dashboards.</p>
+          </div>
+          <div className="glass p-6 text-center fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 w-fit mx-auto mb-4">
+              <Users size={24} />
+            </div>
+            <h3 className="text-lg font-semibold text-slate-200 mb-2">Team Access</h3>
+            <p className="text-sm text-slate-400">Collaborate with your team and manage subscriptions together.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const [showLanding, setShowLanding] = useState(true)
   const [user, setUser] = useState(null)
   const [activePage, setActivePage] = useState('dashboard')
   const [email, setEmail] = useState('')
@@ -830,6 +883,10 @@ function App() {
     } else {
       setRegError('Registration failed. Try again.')
     }
+  }
+
+  if (showLanding) {
+    return <LandingPage />
   }
 
   if (!user) {
