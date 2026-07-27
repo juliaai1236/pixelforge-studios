@@ -689,13 +689,23 @@ function Dashboard({ user, onLogout }) {
 
   const sortedActivity = useMemo(() => {
     if (!safeActivity.length) return []
-    return [...safeActivity].sort((a, b) => {
+    let filtered = [...safeActivity]
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      filtered = filtered.filter(row =>
+        (row.tool || '').toLowerCase().includes(q) ||
+        (row.action || '').toLowerCase().includes(q) ||
+        (row.user || '').toLowerCase().includes(q) ||
+        (row.status || '').toLowerCase().includes(q)
+      )
+    }
+    return filtered.sort((a, b) => {
       const aVal = a[sortField] || ''
       const bVal = b[sortField] || ''
       const comparison = typeof aVal === 'string' ? aVal.localeCompare(bVal) : aVal - bVal
       return sortDir === 'asc' ? comparison : -comparison
     })
-  }, [safeActivity, sortField, sortDir])
+  }, [safeActivity, sortField, sortDir, searchQuery])
 
   if (loading) {
     return (
