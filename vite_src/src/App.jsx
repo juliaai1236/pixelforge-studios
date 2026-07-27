@@ -1119,7 +1119,7 @@ function App() {
   }
 
   if (showLanding) {
-    return <LandingPage />
+    return <LandingPage onGetStarted={() => setShowLanding(false)} />
   }
 
   if (!user) {
