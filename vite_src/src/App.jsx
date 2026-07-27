@@ -725,7 +725,7 @@ function Dashboard({ user, onLogout }) {
 
   const sortedActivity = useMemo(() => {
     if (!safeActivity.length) return []
-    let filtered = [...safeActivity]
+    let filtered = [...(safeActivity ?? [])]
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       filtered = filtered.filter(row =>
